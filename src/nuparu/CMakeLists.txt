@@ -8,21 +8,21 @@ target_sources("positions"
     "positions.hpp"
     "positions.cpp"
   )
-target_include_directories("positions"
-PUBLIC
-  ${Boost_INCLUDE_DIRS}
-  ${LOCPROJ_INCLUDE_DIR}
-)
 add_library("nuparu::positions" ALIAS "positions")
+
+add_executable("positions_test" "")
+target_sources("positions_test"
+  PRIVATE
+    "positions_test.cpp"
+  )
+target_link_libraries("positions_test"
+  "nuparu::positions"
+  )
+add_test("nuparu::positions_test" "positions_test")
 
 add_executable("example_test" "")
 target_sources("example_test"
   PRIVATE
     "example_test.cpp"
-  )
-target_include_directories("example_test"
-  PUBLIC
-    ${Boost_INCLUDE_DIRS}
-    ${LOCPROJ_INCLUDE_DIR}
   )
 add_test("nuparu::example_test" "example_test")

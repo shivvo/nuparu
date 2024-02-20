@@ -20,6 +20,11 @@ find_package(Boost 1.71.0 REQUIRED)
 # Set local include directories
 set(LOCPROJ_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
 
+include_directories(
+  ${Boost_INCLUDE_DIRS}
+  ${LOCPROJ_INCLUDE_DIR}
+  )
+
 # Needed in every CMakeLists.txt that forms a path to tests via
 # add_subdirectory() calls.
 enable_testing()
