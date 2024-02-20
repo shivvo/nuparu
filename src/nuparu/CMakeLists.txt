@@ -5,7 +5,8 @@ enable_testing()
 add_executable("example_test" "")
 target_sources("example_test"
   PRIVATE
-    "example_test.cpp")
+    "example_test.cpp"
+  )
 target_include_directories("example_test"
   PUBLIC
     #{Boost_INCLUDE_DIRS}
