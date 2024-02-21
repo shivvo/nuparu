@@ -3,32 +3,35 @@
 #include <algorithm>
 #include <boost/algorithm/string/join.hpp>
 
+#include <iterator>
+
 namespace nuparu
 {
 
 void Error::Update(ErrorCode error_code, const std::string &message)
 {
   // Credit to Valerie. Thanks bestieeeeeee!!!!!!!
-  std::string valerie =
-      GetStringFromErrorCode(this->error_code) + " " + this->message;
-  this->stack_trace.push_back(valerie);
-  this->error_code = error_code;
-  this->message = message;
+  std::string valerie = GetStringFromErrorCode(m_error_code) + " " + m_message;
+  m_stack_trace.push_back(valerie);
+  m_error_code = error_code;
+  m_message = message;
 }
 
 void Error::PushTrace(const std::string &trace)
 {
-  this->stack_trace.push_back(trace);
+  m_stack_trace.push_back(trace);
 }
 
 std::string Error::DebugString()
 {
   std::string current_error =
-      GetStringFromErrorCode(this->error_code) + " " + this->message;
+      GetStringFromErrorCode(m_error_code) + " " + m_message;
+
   std::string trace_str = "\n";
-  for (const auto &trace_line : this->stack_trace)
+  for (auto trace_line_it = m_stack_trace.rbegin();
+       trace_line_it != m_stack_trace.rend(); trace_line_it++)
   {
-    trace_str += trace_line + "\n";
+    trace_str += *trace_line_it + "\n";
   }
   return current_error + trace_str;
 }
