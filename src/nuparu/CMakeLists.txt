@@ -10,6 +10,16 @@ target_sources("error"
   )
 add_library("nuparu::error" ALIAS "error")
 
+add_executable("error_test" "")
+target_sources("error_test"
+  PRIVATE
+    "error_test.cpp"
+  )
+target_link_libraries("error_test"
+  "nuparu::error"
+  )
+add_test("nuparu::error_test" "error_test")
+
 add_library("positions" SHARED "")
 target_sources("positions"
   PRIVATE

@@ -5,23 +5,41 @@
 #include <string>
 #include <vector>
 
+#include <boost/current_function.hpp>
+#include <boost/preprocessor/facilities/expand.hpp>
+#include <boost/preprocessor/stringize.hpp>
+
+#define SIMPLETRACE(val)                                                       \
+  (std::string(__FILE__) + " : " + std::string(BOOST_CURRENT_FUNCTION) +       \
+   " : " + std::to_string(__LINE__))
+
 #define TRY(statement)                                                         \
   {                                                                            \
     auto _error = statement;                                                   \
     if (!_error.None())                                                        \
     {                                                                          \
-      _error.PushTrace("__FILE__ __func__ __LINE__");                          \
+      _error.PushTrace(SIMPLETRACE(0));                                        \
       return _error;                                                           \
     }                                                                          \
   }
 
-#define ERRORVAR(val) _erroror_##__func__##__LINE__
+#define STRICT_TRY(statement)                                                  \
+  {                                                                            \
+    auto _error = statement;                                                   \
+    if (!_error.None())                                                        \
+    {                                                                          \
+      _error.PushTrace(SIMPLETRACE(0));                                        \
+      std::cerr << _error.DebugString();                                       \
+    }                                                                          \
+  }
+
+#define ERRORVAR(val) _erroror_##BOOST_PP_STRINGIZE(__LINE__)
 
 #define TRY_ASSIGN(lhs, statement)                                             \
   auto ERRORVAR(0) = statement;                                                \
   if (!ERRORVAR(0).MutableError().None())                                      \
   {                                                                            \
-    ERRORVAR(0).MutableError().PushTrace("__FILE__ __func__ __LINE__");        \
+    ERRORVAR(0).MutableError().PushTrace(SIMPLETRACE(0));                      \
     return ERRORVAR(0);                                                        \
   }                                                                            \
   lhs = std::move(ERRORVAR(0)).Value();
