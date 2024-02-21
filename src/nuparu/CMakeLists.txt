@@ -2,11 +2,22 @@
 # add_subdirectory() calls.
 enable_testing()
 
+add_library("error" SHARED "")
+target_sources("error"
+  PRIVATE
+    "error.hpp"
+    "error.cpp"
+  )
+add_library("nuparu::error" ALIAS "error")
+
 add_library("positions" SHARED "")
 target_sources("positions"
   PRIVATE
     "positions.hpp"
     "positions.cpp"
+  )
+target_link_libraries("positions"
+  "nuparu::error"
   )
 add_library("nuparu::positions" ALIAS "positions")
 

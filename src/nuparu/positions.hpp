@@ -4,20 +4,26 @@
 #include <cstdint>
 #include <vector>
 
-namespace nuparu {
+namespace nuparu
+{
 
 // Given a 1D array of fixed size, or region, store an ordered list of fixed
 // size (between 1 and region size) of indices, or positions, of interest within
 // that region. For fixed region size and positions size, there are a finite
 // number of positions and the possible values comprise the "positions space"
 // for that region size and positions size.
-class Positions {
-public:
+class Positions
+{
+ public:
   Positions(std::vector<int32_t> positions, int32_t region_size)
-      : m_positions(positions), m_positions_size(positions.size()),
-        m_region_size(region_size) {}
+      : m_positions(positions),
+        m_positions_size(positions.size()),
+        m_region_size(region_size)
+  {
+  }
 
-  int32_t GetPosition(int position_index) {
+  int32_t GetPosition(int position_index)
+  {
     return m_positions[position_index];
   }
 
@@ -29,7 +35,7 @@ public:
   bool IsBegin();
   bool IsEnd();
 
-private:
+ private:
   int GetMinValueForCounterAtIndex(int index);
   int GetMaxValueForCounterAtIndex(int index);
 
@@ -38,6 +44,6 @@ private:
   int32_t m_region_size;
 };
 
-} // namespace nuparu
+}  // namespace nuparu
 
 #endif

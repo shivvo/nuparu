@@ -1,5 +1,5 @@
 #include <iostream>
-#define BOOST_TEST_MODULE nuparu_example_test
+#define BOOST_TEST_MODULE nuparu_positions_test
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/test/included/unit_test.hpp>
