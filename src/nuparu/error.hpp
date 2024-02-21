@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <string>
+#include <type_traits>>
 #include <vector>
 
 #include <boost/current_function.hpp>
@@ -37,9 +38,9 @@
 
 #define TRY_ASSIGN(lhs, statement)                                             \
   auto ERRORVAR(0) = statement;                                                \
-  if (!ERRORVAR(0).MutableError().None())                                      \
+  if (!ERRORVAR(0).Err().None())                                               \
   {                                                                            \
-    ERRORVAR(0).MutableError().PushTrace(SIMPLETRACE(0));                      \
+    ERRORVAR(0).MutableErr().PushTrace(SIMPLETRACE(0));                        \
     return ERRORVAR(0);                                                        \
   }                                                                            \
   lhs = std::move(ERRORVAR(0)).Value();
@@ -89,13 +90,44 @@ private:
   std::vector<std::string> m_stack_trace;
 };
 
-template <typename T> class ErrorOr
+template <typename T,
+          std::enable_if_t<std::conjunction_v<                  //
+                               std::is_default_constructible<T> //
+                               >                                //
+                           ,
+                           int> = 0 //
+          >
+class ErrorOr
 {
 public:
-  ErrorOr(Error error) : m_error(error), m_value(std::nullopt) {}
-  ErrorOr(const T &value) : m_error(ErrorCode::NONE), m_value() {}
+  ErrorOr(Error error) : m_error(error), m_value() {}
+  template <typename U,
+            std::enable_if_t<std::disjunction_v<              //
+                                 std::is_constructible<T, U>, //
+                                 std::is_convertible<U, T>,   //
+                                 std::is_same<T, U>           //
+                                 >                            //
+                             ,
+                             int> = 0 //
+            >
+  ErrorOr(const U &value) : m_error(ErrorCode::NONE), m_value(value)
+  {
+  }
+  template <typename U,
+            std::enable_if_t<std::disjunction_v<              //
+                                 std::is_constructible<T, U>, //
+                                 std::is_convertible<U, T>,   //
+                                 std::is_same<T, U>           //
+                                 >                            //
+                             ,
+                             int> = 0 //
+            >
+  ErrorOr(U &&value) : m_error(ErrorCode::NONE), m_value(value)
+  {
+  }
 
-  Error &MutableError() { return m_error; }
+  Error &MutableErr() { return m_error; }
+  const Error &Err() { return m_error; }
   T Value() const { return m_value; }
 
 private:

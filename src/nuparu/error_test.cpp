@@ -1,3 +1,4 @@
+#include <cstdint>
 #define BOOST_TEST_MODULE nuparu_error_test
 
 #include <boost/algorithm/string.hpp>
@@ -84,5 +85,16 @@ BOOST_AUTO_TEST_CASE(ErrorMutations)
   BOOST_TEST(boost::algorithm::contains(debug_string, "INTERNAL"));
   BOOST_TEST(boost::algorithm::contains(debug_string, "mutated to internal"));
 }
+
+BOOST_AUTO_TEST_CASE(ErrorOrBaseCases)
+{
+
+  ErrorOr<int64_t> error_or_contains_error = Error(ErrorCode::INTERNAL);
+  BOOST_TEST(!error_or_contains_error.Err().None());
+
+  ErrorOr<int64_t> error_or_contains_value = 6;
+  BOOST_TEST(error_or_contains_value.Err().None());
+  BOOST_TEST(error_or_contains_value.Value() == 6);
+};
 
 BOOST_AUTO_TEST_SUITE_END()
