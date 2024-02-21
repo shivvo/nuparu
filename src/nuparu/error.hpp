@@ -22,12 +22,13 @@ enum ErrorCode
 // throwing exceptions. Includes some loose tracking of the stack trace.
 struct Error
 {
-  Error(ErrorCode error_code, std::string message)
+  Error(ErrorCode error_code, const std::string &message)
       : error_code(error_code), message(message){};
 
   // Updates the top-level values of members, but pushes old values into the
   // stack trace.
-  void Update(ErrorCode error_code, std::string message);
+  void Update(ErrorCode error_code, const std::string &message);
+  void PushTrace(const std::string &trace);
   // Debug string.
   std::string DebugString();
 
@@ -38,6 +39,8 @@ struct Error
   std::vector<std::string> stack_trace;
 };
 
-}  // namespace nuparu
+std::string GetStringFromErrorCode(ErrorCode error_code);
+
+} // namespace nuparu
 
 #endif
