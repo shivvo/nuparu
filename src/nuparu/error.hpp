@@ -68,8 +68,8 @@ public:
   {
   }
 
-  ErrorCode Code() { return m_error_code; }
-  bool None() { return m_error_code == ErrorCode::NONE; }
+  ErrorCode Code() const { return m_error_code; }
+  bool None() const { return m_error_code == ErrorCode::NONE; }
 
   // Updates the top-level values of members, but pushes old values into the
   // stack trace.
