@@ -3,7 +3,7 @@
 
 #include <optional>
 #include <string>
-#include <type_traits>>
+#include <type_traits>
 #include <vector>
 
 #include <boost/current_function.hpp>
@@ -34,7 +34,7 @@
     }                                                                          \
   }
 
-#define ERRORVAR(val) _erroror_##BOOST_PP_STRINGIZE(__LINE__)
+#define ERRORVAR(val) _erroror_##__LINE__
 
 #define TRY_ASSIGN(lhs, statement)                                             \
   auto ERRORVAR(0) = statement;                                                \

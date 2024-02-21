@@ -38,6 +38,19 @@ Error MaybeMutateAndPassThroughError(const Error &error)
   }
   return error;
 }
+
+ErrorOr<std::string> ErrorOrPassthroughFunction2(ErrorOr<std::string> val)
+{
+  TRY_ASSIGN(std::string str_val, val);
+  return str_val;
+}
+
+ErrorOr<std::string> ErrorOrPassthroughFunction1(ErrorOr<std::string> val)
+{
+  TRY_ASSIGN(auto str_val, ErrorOrPassthroughFunction2(val));
+  return str_val;
+}
+
 } // namespace
 
 BOOST_AUTO_TEST_SUITE(ErrorTestSuite)
