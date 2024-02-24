@@ -22,7 +22,7 @@ void Error::PushTrace(const std::string &trace)
   m_stack_trace.push_back(trace);
 }
 
-std::string Error::DebugString()
+std::string Error::DebugString() const
 {
   std::string current_error =
       GetStringFromErrorCode(m_error_code) + " " + m_message;

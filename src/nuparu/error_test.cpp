@@ -1,9 +1,9 @@
-#include <cstdint>
 #define BOOST_TEST_MODULE nuparu_error_test
 
 #include <boost/algorithm/string.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/test/included/unit_test.hpp>
+#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -49,6 +49,11 @@ ErrorOr<std::string> ErrorOrPassthroughFunction1(ErrorOr<std::string> val)
 {
   TRY_ASSIGN(auto str_val, ErrorOrPassthroughFunction2(val));
   return str_val;
+}
+
+ErrorOr<std::string> MaybeFailAssign(ErrorOr<std::string> error_or_val)
+{
+  return ErrorOrPassthroughFunction1(error_or_val);
 }
 
 } // namespace
@@ -110,4 +115,26 @@ BOOST_AUTO_TEST_CASE(ErrorOrBaseCases)
   BOOST_TEST(error_or_contains_value.Value() == 6);
 };
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_CASE(ErrorOrTryAssign)
+{
+  {
+    ErrorOr<std::string> error_or_contains_error = Error(ErrorCode::INTERNAL);
+    auto passthrough_val = MaybeFailAssign(error_or_contains_error);
+    BOOST_TEST(!passthrough_val.Err().None());
+    BOOST_TEST(boost::algorithm::contains(passthrough_val.Err().DebugString(),
+                                          "ErrorOrPassthroughFunction1"));
+    BOOST_TEST(boost::algorithm::contains(passthrough_val.Err().DebugString(),
+                                          "ErrorOrPassthroughFunction2"));
+  }
+  {
+    ErrorOr<std::string> error_or_contains_val = "i luv u 3000";
+    auto passthrough_val = MaybeFailAssign(error_or_contains_val);
+    BOOST_TEST(passthrough_val.Err().None());
+    BOOST_TEST(!boost::algorithm::contains(passthrough_val.Err().DebugString(),
+                                           "ErrorOrPassthroughFunction1"));
+    BOOST_TEST(!boost::algorithm::contains(passthrough_val.Err().DebugString(),
+                                           "ErrorOrPassthroughFunction2"));
+  }
+}
+
+BOOST_AUTO_TEST_SUITE_END();
