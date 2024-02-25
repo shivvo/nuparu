@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "nuparu/error.hpp"
+
 namespace nuparu
 {
 
@@ -14,18 +16,23 @@ namespace nuparu
 // for that region size and positions size.
 class Positions
 {
- public:
+public:
   Positions(std::vector<int32_t> positions, int32_t region_size)
-      : m_positions(positions),
-        m_positions_size(positions.size()),
+      : m_positions(positions), m_positions_size(positions.size()),
         m_region_size(region_size)
   {
   }
 
-  int32_t GetPosition(int position_index)
+  ErrorOr<int32_t> GetPosition(int position_index) const
   {
-    return m_positions[position_index];
+    if (position_index < 0 || position_index >= m_positions_size)
+    {
+      return Error(ErrorCode::INVALID_ARGUMENT, "Invalid position index");
+    }
+    return m_positions.at(position_index);
   }
+
+  const std::vector<int32_t> GetAllPositions() const { return m_positions; }
 
   // Increment and decrement operations.
   void Next();
@@ -35,8 +42,10 @@ class Positions
   bool IsBegin();
   bool IsEnd();
 
- private:
+private:
+  // Get exclusive lower bound for index.
   int GetMinValueForCounterAtIndex(int index);
+  // Get exclusive upper bound for index.
   int GetMaxValueForCounterAtIndex(int index);
 
   std::vector<int32_t> m_positions;
@@ -44,6 +53,6 @@ class Positions
   int32_t m_region_size;
 };
 
-}  // namespace nuparu
+} // namespace nuparu
 
 #endif

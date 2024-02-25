@@ -5,9 +5,11 @@ namespace nuparu
 
 int Positions::GetMinValueForCounterAtIndex(int index)
 {
-  if (index == 0) return 0;
+  if (index == 0)
+    return -1;
   return m_positions[index - 1];
 }
+
 int Positions::GetMaxValueForCounterAtIndex(int index)
 {
   return m_region_size - m_positions.size() + index;
@@ -15,7 +17,8 @@ int Positions::GetMaxValueForCounterAtIndex(int index)
 
 void Positions::Next()
 {
-  if (IsEnd()) return;
+  if (IsEnd())
+    return;
 
   int current_counter_left_index = 0;
 
@@ -53,7 +56,8 @@ void Positions::Next()
 
 void Positions::Prev()
 {
-  if (IsBegin()) return;
+  if (IsBegin())
+    return;
 
   int current_counter_left_index = 0;
 
@@ -91,12 +95,12 @@ void Positions::Prev()
 
 bool Positions::IsBegin()
 {
-  return m_positions[m_positions.size() - 1] == m_positions.size() - 1;
+  return m_positions[m_positions_size - 1] == (m_positions_size - 1);
 }
 
 bool Positions::IsEnd()
 {
-  return m_positions[0] == m_region_size - m_positions.size();
+  return m_positions[0] == GetMaxValueForCounterAtIndex(0);
 }
 
-}  // namespace nuparu
+} // namespace nuparu
