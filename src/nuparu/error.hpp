@@ -102,53 +102,72 @@ class ErrorOr
 public:
   ErrorOr(Error error) : m_error(error), m_value() {}
   template <typename U,
-            std::enable_if_t<std::disjunction_v<                      //
-                                 std::is_constructible<T, const U &>, //
-                                 std::is_convertible<const U &, T>,   //
-                                 std::is_same<T, U>                   //
-                                 >                                    //
-                             ,
-                             int> = 0 //
+            std::enable_if_t<                                        //
+                std::conjunction_v<                                  //
+                    std::negation<                                   //
+                        std::disjunction<                            //
+                            std::is_constructible<Error, const U &>, //
+                            std::is_convertible<const U &, Error>,   //
+                            std::is_same<Error, U>                   //
+                            >                                        //
+                        >,                                           //
+                    std::disjunction<                                //
+                        std::is_constructible<T, const U &>,         //
+                        std::is_convertible<const U &, T>,           //
+                        std::is_same<T, U>                           //
+                        >                                            //
+                    >,                                               //
+                int> = 0                                             //
             >
   ErrorOr(const U &value) : m_error(ErrorCode::NONE), m_value(value)
   {
   }
   template <typename U,
-            std::enable_if_t<std::disjunction_v<                 //
-                                 std::is_constructible<T, U &&>, //
-                                 std::is_convertible<U &&, T>,   //
-                                 std::is_same<T, U>              //
-                                 >                               //
-                             ,
-                             int> = 0 //
+            std::enable_if_t<                                   //
+                std::conjunction_v<                             //
+                    std::negation<                              //
+                        std::disjunction<                       //
+                            std::is_constructible<Error, U &&>, //
+                            std::is_convertible<U &&, Error>,   //
+                            std::is_same<Error, U>              //
+                            >                                   //
+                        >,                                      //
+                    std::disjunction<                           //
+                        std::is_constructible<T, U &&>,         //
+                        std::is_convertible<U &&, T>,           //
+                        std::is_same<T, U>                      //
+                        >                                       //
+                    >,                                          //
+                int> = 0                                        //
             >
   ErrorOr(U &&value) : m_error(ErrorCode::NONE), m_value(value)
   {
   }
-  // template <typename U,
-  //           std::enable_if_t<std::disjunction_v<                      //
-  //                                std::is_constructible<T, const U &>, //
-  //                                std::is_convertible<const U &, T>,   //
-  //                                std::is_same<T, U>                   //
-  //                                >                                    //
-  //                            ,
-  //                            int> = 0 //
-  //           >
-  // ErrorOr(const ErrorOr<U> &value) : m_error(ErrorCode::NONE), m_value(value)
-  // {
-  // }
-  // template <typename U,
-  //           std::enable_if_t<std::disjunction_v<                 //
-  //                                std::is_constructible<T, U &&>, //
-  //                                std::is_convertible<U &&, T>,   //
-  //                                std::is_same<T, U>              //
-  //                                >                               //
-  //                            ,
-  //                            int> = 0 //
-  //           >
-  // ErrorOr(ErrorOr<U> &&value) : m_error(ErrorCode::NONE), m_value(value)
-  // {
-  // }
+  template <typename U,
+            std::enable_if_t<                            //
+                std::disjunction_v<                      //
+                    std::is_constructible<T, const U &>, //
+                    std::is_convertible<const U &, T>,   //
+                    std::is_same<T, U>                   //
+                    >,                                   //
+                int> = 0                                 //
+            >
+  ErrorOr(const ErrorOr<U> &other)
+      : m_error(other.m_error), m_value(other.m_value)
+  {
+  }
+  template <typename U,
+            std::enable_if_t<                       //
+                std::disjunction_v<                 //
+                    std::is_constructible<T, U &&>, //
+                    std::is_convertible<U &&, T>,   //
+                    std::is_same<T, U>              //
+                    >,                              //
+                int> = 0                            //
+            >
+  ErrorOr(ErrorOr<U> &&other) : m_error(other.m_error), m_value(other.m_value)
+  {
+  }
 
   Error &MutableErr() { return m_error; }
   const Error &Err() { return m_error; }
